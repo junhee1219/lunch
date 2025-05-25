@@ -1,25 +1,36 @@
-'use client'  // ← 이 파일은 클라이언트에서만 동작
+// app/ClientSchedules.tsx  (홈에서 일정 목록 렌더링)
+'use client'
 
+import Link from 'next/link'
 import { useState } from 'react'
 
 type Props = {
-    schedules: { id: string; title: string; scheduled_at: string }[]
+    schedules: { id: string; title?: string; location: string; scheduled_at: string }[]
 }
 
 export default function ClientSchedules({ schedules: initial }: Props) {
     const [schedules] = useState(initial)
 
     return (
-        <main className="p-8">
-            <h1 className="text-2xl font-bold">최근 점심 일정</h1>
-            <ul className="mt-4 space-y-2">
-                {schedules.map((s) => (
-                    <li key={s.id} className="card p-4">
-                        <h2>{s.title || s.location}</h2>
-                        <p>{new Date(s.scheduled_at).toLocaleString()}</p>
-                    </li>
-                ))}
-            </ul>
-        </main>
+        <ul className="grid gap-4 md:grid-cols-2">
+            {schedules.map((s) => (
+                <li key={s.id}>
+                    <div className="card bg-base-100 shadow hover:shadow-lg transition">
+                        <div className="card-body">
+                            <h2 className="card-title">{s.title || s.location}</h2>
+                            <p className="text-sm text-gray-600">
+                                {new Date(s.scheduled_at).toLocaleString()}
+                            </p>
+                            <Link
+                                href={`/schedule/${s.id}`}
+                                className="btn btn-sm btn-link mt-2"
+                            >
+                                자세히 보기
+                            </Link>
+                        </div>
+                    </div>
+                </li>
+            ))}
+        </ul>
     )
 }

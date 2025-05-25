@@ -1,4 +1,4 @@
-// app/schedule/[id]/page.tsx
+// app/schedule/[id]/page.tsx  (일정 상세 & RSVP)
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -11,14 +11,12 @@ export default function ScheduleDetailPage() {
     const [participants, setParticipants] = useState<any[]>([])
     const [name, setName] = useState('')
     const [status, setStatus] = useState<'accepted'|'declined'|'pending'>('pending')
+    const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
-    const [isLoggedIn, setIsLoggedIn] = useState(false)
 
-    // 일정 및 참가자 불러오기 + 로그인 상태 확인
     useEffect(() => {
         ;(async () => {
-            // 일정 + 참가자
             const { data, error } = await supabaseClient
                 .from('schedules')
                 .select('*, participants(*)')
@@ -30,46 +28,37 @@ export default function ScheduleDetailPage() {
                 setSchedule(data)
                 setParticipants(data.participants)
             }
-
-            // 로그인 여부
             const {
-                data: { session }
+                data: { session },
             } = await supabaseClient.auth.getSession()
             setIsLoggedIn(!!session?.user)
         })()
     }, [id])
 
-    // RSVP 처리
     const handleRsvp = async (choice: 'accepted'|'declined') => {
         setLoading(true)
         setError(null)
-
-        // 비회원이면 이름 필수
         if (!isLoggedIn && !name) {
             setError('이름을 입력해주세요.')
             setLoading(false)
             return
         }
-
         try {
             const body: any = { status: choice }
             if (!isLoggedIn) body.name = name
-
             const res = await fetch(`/api/schedules/${id}/rsvp`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body),
             })
             const json = await res.json()
-            if (!res.ok) throw new Error(json.error || '응답 처리 중 오류가 발생했습니다.')
-
+            if (!res.ok) throw new Error(json.error || '응답 처리 오류')
             setStatus(choice)
-            // 참가자 목록 갱신
-            const { data: updated, error: updErr } = await supabaseClient
+            const { data: up, error: upErr } = await supabaseClient
                 .from('participants')
                 .select('*')
                 .eq('schedule_id', id)
-            if (!updErr && updated) setParticipants(updated)
+            if (!upErr && up) setParticipants(up)
         } catch (e: any) {
             setError(e.message)
         } finally {

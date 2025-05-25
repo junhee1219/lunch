@@ -1,4 +1,4 @@
-// app/new/page.tsx
+// app/new/page.tsx  (새 일정 생성)
 'use client'
 
 import { useState } from 'react'
@@ -6,8 +6,6 @@ import { useRouter } from 'next/navigation'
 
 export default function NewSchedulePage() {
     const router = useRouter()
-
-    // 폼 상태
     const [title, setTitle] = useState('')
     const [description, setDescription] = useState('')
     const [date, setDate] = useState('')
@@ -23,11 +21,10 @@ export default function NewSchedulePage() {
         setError(null)
 
         const scheduled_at = new Date(`${date}T${time}`).toISOString()
-
         const res = await fetch('/api/schedules', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ title, description, scheduled_at, location, public_scope: scope })
+            body: JSON.stringify({ title, description, scheduled_at, location, public_scope: scope }),
         })
 
         if (!res.ok) {
@@ -37,19 +34,18 @@ export default function NewSchedulePage() {
             return
         }
         const { schedule } = await res.json()
-        // 생성된 일정 상세 페이지로 이동
         router.push(`/schedule/${schedule.id}`)
     }
 
     return (
         <div className="max-w-md mx-auto p-4">
-            <h1 className="text-xl font-bold mb-4">새 점심 일정 만들기</h1>
+            <h1 className="text-2xl font-bold mb-4">새 점심 일정 만들기</h1>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                     <label className="block mb-1">제목 (선택)</label>
                     <input
                         value={title}
-                        onChange={e => setTitle(e.target.value)}
+                        onChange={(e) => setTitle(e.target.value)}
                         className="input input-bordered w-full"
                         placeholder="예: 팀 점심 회의"
                     />
@@ -58,7 +54,7 @@ export default function NewSchedulePage() {
                     <label className="block mb-1">설명 (선택)</label>
                     <textarea
                         value={description}
-                        onChange={e => setDescription(e.target.value)}
+                        onChange={(e) => setDescription(e.target.value)}
                         className="textarea textarea-bordered w-full"
                         placeholder="간단한 메모를 남겨보세요"
                     />
@@ -69,7 +65,7 @@ export default function NewSchedulePage() {
                         <input
                             type="date"
                             value={date}
-                            onChange={e => setDate(e.target.value)}
+                            onChange={(e) => setDate(e.target.value)}
                             className="input input-bordered w-full"
                             required
                         />
@@ -79,7 +75,7 @@ export default function NewSchedulePage() {
                         <input
                             type="time"
                             value={time}
-                            onChange={e => setTime(e.target.value)}
+                            onChange={(e) => setTime(e.target.value)}
                             className="input input-bordered w-full"
                             required
                         />
@@ -89,7 +85,7 @@ export default function NewSchedulePage() {
                     <label className="block mb-1">장소</label>
                     <input
                         value={location}
-                        onChange={e => setLocation(e.target.value)}
+                        onChange={(e) => setLocation(e.target.value)}
                         className="input input-bordered w-full"
                         placeholder="예: 회사 식당"
                         required
@@ -99,7 +95,7 @@ export default function NewSchedulePage() {
                     <label className="block mb-1">공개 범위</label>
                     <select
                         value={scope}
-                        onChange={e => setScope(e.target.value as any)}
+                        onChange={(e) => setScope(e.target.value as any)}
                         className="select select-bordered w-full"
                     >
                         <option value="link">링크 소지자만</option>

@@ -18,7 +18,7 @@ def build_tree_lines(root: Path, prefix: str = "") -> list[str]:
     entries = sorted(
         [p for p in root.iterdir()
          if p.name != "node_modules" and not p.name.startswith(".")
-         and (p.is_dir() or p.suffix in {".ts", ".tsx"})],
+         and (p.is_dir() or p.suffix in {".ts", ".tsx", ".css", ".json"})],
         key=lambda p: (not p.is_dir(), p.name.lower())
     )
     lines: list[str] = []
@@ -32,7 +32,9 @@ def build_tree_lines(root: Path, prefix: str = "") -> list[str]:
 
 def gather_ts_files(root: Path) -> list[Path]:
     return sorted(p for p in root.rglob("*.ts")  if "node_modules" not in p.parts) \
-           + sorted(p for p in root.rglob("*.tsx") if "node_modules" not in p.parts)
+           + sorted(p for p in root.rglob("*.tsx") if "node_modules" not in p.parts) \
+           + sorted(p for p in root.rglob("*.json") if "node_modules" not in p.parts) \
+           + sorted(p for p in root.rglob("*.css") if "node_modules" not in p.parts)
 
 def main():
     root = Path(PATH)
@@ -51,6 +53,8 @@ def main():
     else:
         for file_path in ts_files:
             rel = file_path.relative_to(root)
+            if str(rel) == "package-lock.json" or str(rel).startswith("."):
+                continue
             output_lines.append(f"\n==== File: {rel} ====\n")
             try:
                 text = file_path.read_text(encoding="utf-8")

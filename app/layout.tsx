@@ -1,7 +1,10 @@
 // app/layout.tsx
+import './globals.css' // Tailwind 의 전역 CSS
+import Link from 'next/link'
+
 export const metadata = {
-    title: '점심약속 스케줄러',
-    description: '직장인 점심약속을 간편하게 관리하세요',
+    title: '🍽️ LunchApp',
+    description: '직장인 점심약속 스케줄러',
 }
 
 export default function RootLayout({
@@ -10,19 +13,30 @@ export default function RootLayout({
     children: React.ReactNode
 }) {
     return (
-        <html lang="ko">
-        <body className="min-h-screen bg-gray-50">
-        {/* 예: 공통 헤더 */}
-        <header className="p-4 bg-white shadow">
-            <h1 className="text-xl font-bold">점심약속</h1>
-        </header>
+        <html lang="ko" data-theme="lunchapp">
+        <body className="min-h-screen bg-neutral">
+        {/* 네비게이션 바 */}
+        <nav className="bg-base-100 shadow-md">
+            <div className="container mx-auto flex items-center px-4 py-3">
+                <Link href="/" className="text-xl font-bold mr-6">
+                    🍽️ LunchApp
+                </Link>
+                <Link href="/new" className="btn btn-sm btn-outline mr-4">
+                    새 일정
+                </Link>
+                <Link href="/signup" className="mr-4">
+                    회원가입
+                </Link>
+                <Link href="/login">로그인</Link>
+            </div>
+        </nav>
 
-        {/* 각 페이지 렌더링 위치 */}
-        <main>{children}</main>
+        {/* 메인 컨텐츠 영역 */}
+        <main className="container mx-auto p-4">{children}</main>
 
-        {/* 예: 공통 푸터 */}
-        <footer className="p-4 text-center text-sm text-gray-500">
-            © 2025 LunchApp
+        {/* 푸터 */}
+        <footer className="text-center text-sm text-gray-500 py-4">
+            © 2025 LunchApp. All rights reserved.
         </footer>
         </body>
         </html>
