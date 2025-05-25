@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server'
-import { supabaseServer } from '@/utils/supabase/server'
+import { createClient } from '@/utils/supabase/server'
 
 export async function GET() {
-    const { data, error } = await supabaseServer
+    const { data, error } = await createClient
         .from('schedules')
         .select('*')
         .limit(5)
