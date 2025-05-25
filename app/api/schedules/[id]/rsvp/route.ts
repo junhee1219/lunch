@@ -4,7 +4,7 @@ import { createClient } from '@/utils/supabase/server'
 
 export async function POST(
     req: Request,
-    { params }: { params: { id: string } }
+    { params }
 ) {
     const scheduleId = params.id
     const body = await req.json()
